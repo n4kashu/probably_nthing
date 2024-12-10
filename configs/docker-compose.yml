@@ -28,10 +28,12 @@ services:
 
   api:
     build:
-      context: ./
-      dockerfile: libs/api/Dockerfile
+      context: ./libs/api
+      dockerfile: Dockerfile
     environment:
       NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/superagent
+      REDIS_URL: redis://:redis@redis:6379
     ports:
       - "3000:3000"
     depends_on:
@@ -42,10 +44,12 @@ services:
 
   ui:
     build:
-      context: ./
-      dockerfile: libs/ui/Dockerfile
+      context: ./libs/ui
+      dockerfile: Dockerfile
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3001
     ports:
       - "3001:3001"
     depends_on:
