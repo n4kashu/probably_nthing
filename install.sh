@@ -24,28 +24,50 @@ fi
 # Update system and install dependencies
 print_status "Updating system and installing dependencies..."
 apt update && apt upgrade -y
-apt install -y git python3-pip python3-venv
+apt install -y git curl docker.io docker-compose
+
+# Add current user to docker group
+usermod -aG docker $SUDO_USER
 
 # Create installation directory
-print_status "Creating installation directory..."
+print_status "Setting up Superagent..."
 mkdir -p /opt/superagent
 cd /opt/superagent
 
-# Create and activate virtual environment
-print_status "Setting up Python virtual environment..."
-python3 -m venv venv
-source venv/bin/activate
+# Clone repository
+git clone https://github.com/homanp/superagent.git .
 
-# Install Superagent
-print_status "Installing Superagent..."
-pip install superagent
+# Create environment file
+print_status "Creating environment file..."
+cat > .env << EOL
+# Authentication
+JWT_SECRET=your-jwt-secret
+SESSION_SECRET=your-session-secret
 
-# Optional: Install development version from GitHub
-#git clone https://github.com/superagent-ai/superagent.git
-#cd superagent
-#pip install -e .
+# LLM Providers
+OPENAI_API_KEY=your-openai-api-key
+# ANTHROPIC_API_KEY=your-anthropic-api-key
+# AZURE_OPENAI_API_KEY=your-azure-openai-key
 
-print_status "Installation completed!"
-print_status "You can now use Superagent by activating the virtual environment:"
-echo "cd /opt/superagent"
-echo "source venv/bin/activate"
+# Database
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/superagent
+DATABASE_MIGRATION_URL=postgresql://postgres:postgres@postgres:5432/superagent
+
+# Redis
+REDIS_URL=redis://:redis@redis:6379
+
+# Vector Store (optional)
+# PINECONE_API_KEY=your-pinecone-api-key
+# PINECONE_ENVIRONMENT=your-pinecone-environment
+
+# Server
+PORT=8000
+ENVIRONMENT=development
+EOL
+
+print_status "Starting Superagent..."
+docker-compose up -d
+
+print_status "Installation complete!"
+print_status "Access Superagent API at: http://localhost:8000"
+print_status "Please update your environment variables in /opt/superagent/.env"
