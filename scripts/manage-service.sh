@@ -28,7 +28,7 @@ print_error() {
 if [ "$EUID" -ne 0 ]; then 
     print_error "Please run as root or with sudo privileges"
     exit 1
-}
+fi
 
 # Function to check service status
 check_status() {
