@@ -29,6 +29,10 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# Get script directory
+SCRIPT_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # Update system
 print_status "Updating system packages..."
 apt update && apt upgrade -y
@@ -85,6 +89,12 @@ fi
 print_status "Creating environment directories..."
 mkdir -p libs/api
 mkdir -p libs/ui
+
+# Copy configuration files
+print_status "Copying configuration files..."
+cp "${REPO_ROOT}/configs/docker-compose.yml" .
+cp "${REPO_ROOT}/libs/api/Dockerfile" libs/api/
+cp "${REPO_ROOT}/libs/ui/Dockerfile" libs/ui/
 
 # Create environment files
 print_status "Setting up environment files..."
