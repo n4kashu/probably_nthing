@@ -71,30 +71,14 @@ fi
 
 # Create directory structure
 print_status "Creating directory structure..."
-mkdir -p /opt/superagent
+mkdir -p /opt/superagent/libs/{api,ui}
 cd /opt/superagent
-
-# Clone Superagent repository
-print_status "Cloning Superagent repository..."
-if [ ! -d "/opt/superagent/superagent" ]; then
-    git clone https://github.com/superagent-ai/superagent.git
-    cd superagent
-else
-    print_warning "Superagent repository already exists, updating..."
-    cd superagent
-    git pull
-fi
-
-# Create required directories
-print_status "Creating environment directories..."
-mkdir -p libs/api
-mkdir -p libs/ui
 
 # Copy configuration files
 print_status "Copying configuration files..."
 cp "${REPO_ROOT}/configs/docker-compose.yml" .
-cp "${REPO_ROOT}/libs/api/Dockerfile" libs/api/
-cp "${REPO_ROOT}/libs/ui/Dockerfile" libs/ui/
+cp -r "${REPO_ROOT}/libs/api"/* libs/api/
+cp -r "${REPO_ROOT}/libs/ui"/* libs/ui/
 
 # Create environment files
 print_status "Setting up environment files..."
@@ -129,8 +113,8 @@ chmod 600 libs/api/.env libs/ui/.env
 
 print_status "Installation completed successfully!"
 print_status "Please configure your environment variables in:"
-print_status "- /opt/superagent/superagent/libs/api/.env"
-print_status "- /opt/superagent/superagent/libs/ui/.env"
+print_status "- /opt/superagent/libs/api/.env"
+print_status "- /opt/superagent/libs/ui/.env"
 
 # Remove error handling trap
 trap - EXIT
