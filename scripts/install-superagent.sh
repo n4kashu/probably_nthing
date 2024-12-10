@@ -81,15 +81,41 @@ else
     git pull
 fi
 
-# Create environment files
+# Create environment files from templates
 print_status "Setting up environment files..."
-cp libs/ui/.env.example libs/ui/.env
-cp libs/api/.env.example libs/api/.env
+
+# Create API environment file
+cat > libs/api/.env << EOL
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/superagent
+REDIS_URL=redis://:redis@redis:6379
+
+# Security
+JWT_SECRET=your-jwt-secret
+
+# LLM Provider (uncomment and configure one)
+OPENAI_API_KEY=your_openai_api_key
+#ANTHROPIC_API_KEY=your_anthropic_api_key
+#AZURE_OPENAI_API_KEY=your_azure_openai_api_key
+
+# Server Configuration
+PORT=3000
+NODE_ENV=production
+CORS_ORIGIN=*
+EOL
+
+# Create UI environment file
+cat > libs/ui/.env << EOL
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+EOL
+
+# Set proper permissions
+chmod 600 libs/api/.env libs/ui/.env
 
 print_status "Installation completed successfully!"
 print_status "Please configure your environment variables in:"
-print_status "- /opt/superagent/superagent/libs/ui/.env"
 print_status "- /opt/superagent/superagent/libs/api/.env"
+print_status "- /opt/superagent/superagent/libs/ui/.env"
 
 # Remove error handling trap
 trap - EXIT
