@@ -81,7 +81,12 @@ else
     git pull
 fi
 
-# Create environment files from templates
+# Create required directories
+print_status "Creating environment directories..."
+mkdir -p libs/api
+mkdir -p libs/ui
+
+# Create environment files
 print_status "Setting up environment files..."
 
 # Create API environment file
